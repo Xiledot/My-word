@@ -36,7 +36,6 @@
     border-color: #1e7e34;
 }
 
-
 /* 단어/검은화면 표시 영역 전체 화면 사용 */
 #test-in-progress,
 #blankScreen {
@@ -55,7 +54,7 @@
     box-sizing: border-box;
 }
 
-/* 단어 표시 시 컨텐츠 래퍼 */
+/* 단어 표시 시 컨텐츠(테스트) 래퍼 */
 .test-content-wrapper {
     text-align: center;
     /* padding: 20px; -> #test-in-progress, #blankScreen에 적용 */
