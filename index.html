@@ -15,7 +15,7 @@
             <form id="wordForm">
                 <div>
                     <label for="wordPairs">단어와 뜻 (한 줄에 '단어 뜻' 형식으로 여러 개 입력):</label>
-                    <textarea id="wordPairs" name="wordPairs" rows="10" required placeholder="예시:&#10;apple 사과&#10;banana 바나나&#10;cherry 체리"></textarea>
+                    <textarea id="wordPairs" name="wordPairs" rows="10" required placeholder="예시 (영어 단어부분과 뜻부분 사이에 공백을 넣어주세요):&#10;apple 사과&#10;run out of ~을 다 써버리다, ~이 없어지다&#10;predecessor 전임자, 이전의 것"></textarea>
                 </div>
 
                 <div>
@@ -31,175 +31,77 @@
                 </div>
 
                 <div id="details-textbook" class="details-section" style="display:none;">
-                    <div>
-                        <label for="tb_grade_select">학년:</label>
-                        <select id="tb_grade_select" name="tb_grade">
-                            <option value="">-- 학년 선택 --</option>
-                            <option value="중1">중1</option>
-                            <option value="중2">중2</option>
-                            <option value="중3">중3</option>
-                            <option value="공통영어">공통영어</option>
-                            <option value="영어1">영어1</option>
-                            <option value="영어2">영어2</option>
-                            <option value="영어 독해와 작문">영어 독해와 작문</option>
-                            <option value="기타학년">기타학년 (직접입력용)</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="tb_publisher_select">출판사:</label>
-                        <select id="tb_publisher_select" name="tb_publisher">
-                            <option value="">-- 출판사 선택 --</option>
-                            <option value="YBM 박준언">YBM 박준언</option>
-                            <option value="YBM 한상호">YBM 한상호</option>
-                            <option value="NE능률 김성곤">NE능률 김성곤</option>
-                            <option value="NE능률 양현권">NE능률 양현권</option>
-                            <option value="비상 홍민표">비상 홍민표</option>
-                            <option value="천재 이재영">천재 이재영</option>
-                            <option value="동아 윤정미">동아 윤정미</option>
-                            <option value="지학 민찬규">지학 민찬규</option>
-                            <option value="기타출판사">기타출판사 (직접입력용)</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="tb_lesson_select">단원:</label>
-                        <select id="tb_lesson_select" name="tb_lesson">
-                            <option value="">-- 단원 선택 --</option>
-                            <option value="1과">1과</option>
-                            <option value="2과">2과</option>
-                            <option value="3과">3과</option>
-                            <option value="4과">4과</option>
-                            <option value="5과">5과</option>
-                            <option value="6과">6과</option>
-                            <option value="7과">7과</option>
-                            <option value="8과">8과</option>
-                            <option value="Special Lesson 1">Special Lesson 1</option>
-                            <option value="Special Lesson 2">Special Lesson 2</option>
-                            <option value="기타단원">기타단원</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="tb_sentence_numbers_input">문장 번호 (직접입력):</label>
-                        <input type="text" id="tb_sentence_numbers_input" name="tb_sentence_numbers" placeholder="예: 1-10 또는 전체">
-                    </div>
+                    <div><label for="tb_grade_select">학년:</label><select id="tb_grade_select" name="tb_grade"><option value="">-- 학년 선택 --</option><option value="중1">중1</option><option value="중2">중2</option><option value="중3">중3</option><option value="공통영어">공통영어</option><option value="영어1">영어1</option><option value="영어2">영어2</option><option value="영어 독해와 작문">영어 독해와 작문</option><option value="기타학년">기타학년 (직접입력용)</option></select></div>
+                    <div><label for="tb_publisher_select">출판사:</label><select id="tb_publisher_select" name="tb_publisher"><option value="">-- 출판사 선택 --</option><option value="YBM 박준언">YBM 박준언</option><option value="YBM 한상호">YBM 한상호</option><option value="NE능률 김성곤">NE능률 김성곤</option><option value="NE능률 양현권">NE능률 양현권</option><option value="비상 홍민표">비상 홍민표</option><option value="천재 이재영">천재 이재영</option><option value="동아 윤정미">동아 윤정미</option><option value="지학 민찬규">지학 민찬규</option><option value="기타출판사">기타출판사 (직접입력용)</option></select></div>
+                    <div><label for="tb_lesson_select">단원:</label><select id="tb_lesson_select" name="tb_lesson"><option value="">-- 단원 선택 --</option><option value="1과">1과</option><option value="2과">2과</option><option value="3과">3과</option><option value="4과">4과</option><option value="5과">5과</option><option value="6과">6과</option><option value="7과">7과</option><option value="8과">8과</option><option value="Special Lesson 1">Special Lesson 1</option><option value="Special Lesson 2">Special Lesson 2</option><option value="기타단원">기타단원</option></select></div>
+                    <div><label for="tb_sentence_numbers_input">문장 번호 (직접입력):</label><input type="text" id="tb_sentence_numbers_input" name="tb_sentence_numbers" placeholder="예: 1-10 또는 전체"></div>
                 </div>
                 <div id="details-workbook" class="details-section" style="display:none;">
-                    <input type="text" name="wb_publisher" placeholder="출판사 (예: EBS)">
-                    <input type="text" name="wb_name" placeholder="부교재 이름 (예: 올림포스 독해의 기본 1)">
-                    <input type="text" name="wb_unit" placeholder="단원 (예: 6강)">
-                    <input type="text" name="wb_passage_number" placeholder="지문 번호 (예: 4번)">
+                    <div><label for="wb_publisher_input_form">출판사:</label><input type="text" id="wb_publisher_input_form" name="wb_publisher" placeholder="출판사 (예: EBS)"></div>
+                    <div><label for="wb_name_input_form">부교재 이름:</label><input type="text" id="wb_name_input_form" name="wb_name" placeholder="부교재 이름 (예: 올림포스 독해의 기본 1)"></div>
+                    <div><label for="wb_unit_input_form">단원:</label><input type="text" id="wb_unit_input_form" name="wb_unit" placeholder="단원 (예: 6강)"></div>
+                    <div><label for="wb_passage_number_input_form">지문 번호:</label><input type="text" id="wb_passage_number_input_form" name="wb_passage_number" placeholder="지문 번호 (예: 4번)"></div>
                 </div>
                 <div id="details-mock_exam" class="details-section" style="display:none;">
-                    <input type="text" name="me_year" placeholder="년도 (예: 2024학년도)">
-                    <input type="text" name="me_grade" placeholder="학년 (예: 고2)">
-                    <input type="text" name="me_month" placeholder="월 (예: 6월)">
-                    <input type="text" name="me_number" placeholder="번호 (예: 31번)">
+                    <div><label for="me_year_input_form">년도:</label><input type="text" id="me_year_input_form" name="me_year" placeholder="년도 (예: 2024학년도)"></div>
+                    <div><label for="me_grade_input_form">학년:</label><input type="text" id="me_grade_input_form" name="me_grade" placeholder="학년 (예: 고2)"></div>
+                    <div><label for="me_month_input_form">월:</label><input type="text" id="me_month_input_form" name="me_month" placeholder="월 (예: 6월)"></div>
+                    <div><label for="me_number_input_form">번호:</label><input type="text" id="me_number_input_form" name="me_number" placeholder="번호 (예: 31번)"></div>
                 </div>
                 <div id="details-external" class="details-section" style="display:none;">
-                    <input type="text" name="ext_school" placeholder="학교 (예: 중앙고등학교)">
-                    <input type="text" name="ext_grade" placeholder="학년 (예: 2학년)">
-                    <input type="text" name="ext_name" placeholder="외부지문 이름 (예: The Flynn Effect)">
+                    <div><label for="ext_school_input_form">학교:</label><input type="text" id="ext_school_input_form" name="ext_school" placeholder="학교 (예: 중앙고등학교)"></div>
+                    <div><label for="ext_grade_input_form">학년:</label><input type="text" id="ext_grade_input_form" name="ext_grade" placeholder="학년 (예: 2학년)"></div>
+                    <div><label for="ext_name_input_form">외부지문 이름:</label><input type="text" id="ext_name_input_form" name="ext_name" placeholder="외부지문 이름 (예: The Flynn Effect)"></div>
                 </div>
                 <div id="details-etc" class="details-section" style="display:none;">
-                    <textarea name="etc_memo" placeholder="자유로운 메모 입력"></textarea>
+                    <div><label for="etc_memo_textarea_form">메모:</label><textarea id="etc_memo_textarea_form" name="etc_memo" placeholder="자유로운 메모 입력"></textarea></div>
                 </div>
-
                 <div>
                     <label for="commonMemo">공통 적용될 메모:</label>
                     <textarea id="commonMemo" name="commonMemo" placeholder="단어들에 대한 공통 메모"></textarea>
                 </div>
-
                 <button type="submit" id="saveWordBtn">단어 저장</button>
+            </form>
         </section>
 
         <section id="word-list-section">
             <h2>단어 목록 및 테스트 필터</h2>
             <div id="filter-controls">
                 <h3>테스트 대상 필터링</h3>
-                <div>
-                    <label for="filterCategory">분류:</label>
-                    <select id="filterCategory" name="filterCategory">
-                        <option value="">-- 전체 --</option>
-                        <option value="textbook">교과서</option>
-                        <option value="workbook">부교재</option>
-                        <option value="mock_exam">모의고사</option>
-                        <option value="external">외부지문</option>
-                        <option value="etc">기타</option>
-                    </select>
-                </div>
+                <div><label for="filterCategory">분류:</label><select id="filterCategory" name="filterCategory"><option value="">-- 전체 --</option><option value="textbook">교과서</option><option value="workbook">부교재</option><option value="mock_exam">모의고사</option><option value="external">외부지문</option><option value="etc">기타</option></select></div>
                 <div id="filter-details-textbook" class="filter-details-section" style="display:none;">
-                    <div>
-                        <label for="filter_tb_grade_select">학년:</label>
-                        <select id="filter_tb_grade_select" data-filter-key="grade">
-                            <option value="">-- 전체 학년 --</option>
-                            <option value="중1">중1</option>
-                            <option value="중2">중2</option>
-                            <option value="중3">중3</option>
-                            <option value="공통영어">공통영어</option>
-                            <option value="영어1">영어1</option>
-                            <option value="영어2">영어2</option>
-                            <option value="영어 독해와 작문">영어 독해와 작문</option>
-                            <option value="기타학년">기타학년</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="filter_tb_publisher_select">출판사:</label>
-                        <select id="filter_tb_publisher_select" data-filter-key="publisher">
-                            <option value="">-- 전체 출판사 --</option>
-                            <option value="YBM 박준언">YBM 박준언</option>
-                            <option value="YBM 한상호">YBM 한상호</option>
-                            <option value="NE능률 김성곤">NE능률 김성곤</option>
-                            <option value="NE능률 양현권">NE능률 양현권</option>
-                            <option value="비상 홍민표">비상 홍민표</option>
-                            <option value="천재 이재영">천재 이재영</option>
-                            <option value="동아 윤정미">동아 윤정미</option>
-                            <option value="지학 민찬규">지학 민찬규</option>
-                            <option value="기타출판사">기타출판사</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="filter_tb_lesson_select">단원:</label>
-                        <select id="filter_tb_lesson_select" data-filter-key="lesson">
-                            <option value="">-- 전체 단원 --</option>
-                            <option value="1과">1과</option>
-                            <option value="2과">2과</option>
-                            <option value="3과">3과</option>
-                            <option value="4과">4과</option>
-                            <option value="5과">5과</option>
-                            <option value="6과">6과</option>
-                            <option value="7과">7과</option>
-                            <option value="8과">8과</option>
-                            <option value="Special Lesson 1">Special Lesson 1</option>
-                            <option value="Special Lesson 2">Special Lesson 2</option>
-                            <option value="기타단원">기타단원</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="filter_tb_sentence_numbers_input">문장 번호 (직접입력):</label>
-                        <input type="text" id="filter_tb_sentence_numbers_input" data-filter-key="sentence_numbers" placeholder="필터링할 문장 번호">
-                    </div>
+                    <div><label for="filter_tb_grade_select">학년:</label><select id="filter_tb_grade_select" data-filter-key="grade"><option value="">-- 전체 학년 --</option><option value="중1">중1</option><option value="중2">중2</option><option value="중3">중3</option><option value="공통영어">공통영어</option><option value="영어1">영어1</option><option value="영어2">영어2</option><option value="영어 독해와 작문">영어 독해와 작문</option><option value="기타학년">기타학년</option></select></div>
+                    <div><label for="filter_tb_publisher_select">출판사:</label><select id="filter_tb_publisher_select" data-filter-key="publisher"><option value="">-- 전체 출판사 --</option><option value="YBM 박준언">YBM 박준언</option><option value="YBM 한상호">YBM 한상호</option><option value="NE능률 김성곤">NE능률 김성곤</option><option value="NE능률 양현권">NE능률 양현권</option><option value="비상 홍민표">비상 홍민표</option><option value="천재 이재영">천재 이재영</option><option value="동아 윤정미">동아 윤정미</option><option value="지학 민찬규">지학 민찬규</option><option value="기타출판사">기타출판사</option></select></div>
+                    <div><label for="filter_tb_lesson_select">단원:</label><select id="filter_tb_lesson_select" data-filter-key="lesson"><option value="">-- 전체 단원 --</option><option value="1과">1과</option><option value="2과">2과</option><option value="3과">3과</option><option value="4과">4과</option><option value="5과">5과</option><option value="6과">6과</option><option value="7과">7과</option><option value="8과">8과</option><option value="Special Lesson 1">Special Lesson 1</option><option value="Special Lesson 2">Special Lesson 2</option><option value="기타단원">기타단원</option></select></div>
+                    <div><label for="filter_tb_sentence_numbers_input">문장 번호 (직접입력):</label><input type="text" id="filter_tb_sentence_numbers_input" data-filter-key="sentence_numbers" placeholder="필터링할 문장 번호"></div>
                 </div>
                 <div id="filter-details-workbook" class="filter-details-section" style="display:none;">
-                    <input type="text" id="filter_wb_publisher" data-filter-key="publisher" placeholder="출판사">
-                    <input type="text" id="filter_wb_name" data-filter-key="name" placeholder="부교재 이름">
-                    <input type="text" id="filter_wb_unit" data-filter-key="unit" placeholder="단원">
-                    <input type="text" id="filter_wb_passage_number" data-filter-key="passage_number" placeholder="지문 번호">
+                    <div><label for="filter_wb_publisher">출판사:</label><input type="text" id="filter_wb_publisher" data-filter-key="publisher" placeholder="출판사"></div>
+                    <div><label for="filter_wb_name">부교재 이름:</label><input type="text" id="filter_wb_name" data-filter-key="name" placeholder="부교재 이름"></div>
+                    <div><label for="filter_wb_unit">단원:</label><input type="text" id="filter_wb_unit" data-filter-key="unit" placeholder="단원"></div>
+                    <div><label for="filter_wb_passage_number">지문 번호:</label><input type="text" id="filter_wb_passage_number" data-filter-key="passage_number" placeholder="지문 번호"></div>
                 </div>
                 <div id="filter-details-mock_exam" class="filter-details-section" style="display:none;">
-                    <input type="text" id="filter_me_year" data-filter-key="year" placeholder="년도">
-                    <input type="text" id="filter_me_grade" data-filter-key="grade" placeholder="학년">
-                    <input type="text" id="filter_me_month" data-filter-key="month" placeholder="월">
-                    <input type="text" id="filter_me_number" data-filter-key="number" placeholder="번호">
+                     <div><label for="filter_me_year">년도:</label><input type="text" id="filter_me_year" data-filter-key="year" placeholder="년도"></div>
+                     <div><label for="filter_me_grade">학년:</label><input type="text" id="filter_me_grade" data-filter-key="grade" placeholder="학년"></div>
+                     <div><label for="filter_me_month">월:</label><input type="text" id="filter_me_month" data-filter-key="month" placeholder="월"></div>
+                     <div><label for="filter_me_number">번호:</label><input type="text" id="filter_me_number" data-filter-key="number" placeholder="번호"></div>
                 </div>
                 <div id="filter-details-external" class="filter-details-section" style="display:none;">
-                    <input type="text" id="filter_ext_school" data-filter-key="school" placeholder="학교">
-                    <input type="text" id="filter_ext_grade" data-filter-key="grade" placeholder="학년">
-                    <input type="text" id="filter_ext_name" data-filter-key="name" placeholder="외부지문 이름">
+                    <div><label for="filter_ext_school">학교:</label><input type="text" id="filter_ext_school" data-filter-key="school" placeholder="학교"></div>
+                    <div><label for="filter_ext_grade">학년:</label><input type="text" id="filter_ext_grade" data-filter-key="grade" placeholder="학년"></div>
+                    <div><label for="filter_ext_name">외부지문 이름:</label><input type="text" id="filter_ext_name" data-filter-key="name" placeholder="외부지문 이름"></div>
                 </div>
                 <div id="filter-details-etc" class="filter-details-section" style="display:none;">
-                    <textarea id="filter_etc_memo" data-filter-key="memo" placeholder="메모 내용 필터"></textarea>
+                    <div><label for="filter_etc_memo">메모:</label><textarea id="filter_etc_memo" data-filter-key="memo" placeholder="메모 내용 필터"></textarea></div>
                 </div>
-                <button id="filterWordsBtn">필터 적용 목록 보기</button>
-                <button id="loadAllWordsBtn">전체 단어 목록 보기</button>
+
+                <div class="button-group" style="margin-top: 15px;">
+                    <button id="filterWordsBtn">필터 적용 목록 보기</button>
+                    <button id="loadAllWordsBtn">전체 단어 목록 보기</button>
+                    <button id="startTestBtn" style="display:none;">현재 목록으로 테스트 시작</button>
+                    <button id="deleteSelectedBtn" style="display:none;">선택 단어 일괄 삭제</button>
+                </div>
             </div>
 
             <div id="wordListContainer">
@@ -207,29 +109,26 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>단어</th>
+                            <th><input type="checkbox" id="selectAllCheckbox" title="전체 선택/해제"></th> <th>단어</th>
                             <th>뜻</th>
                             <th>분류</th>
                             <th>상세정보</th>
-                            <th>메모</th>
-                            <th>수정</th>
+                            <th>공통메모</th>
+                            <th>관리</th>
                         </tr>
                     </thead>
-                    <tbody id="wordTableBody">
-                        </tbody>
+                    <tbody id="wordTableBody"></tbody>
                 </table>
             </div>
-            <button id="startTestBtn" style="display:none;">현재 목록으로 테스트 시작</button>
         </section>
     </div>
-    <button id="patchNotesBtn" style="position: fixed; top: 20px; right: 20px; padding: 10px 15px; z-index: 1000; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">패치노트</button>
 
+    <button id="patchNotesBtn" style="position: fixed; top: 20px; right: 20px; padding: 10px 15px; z-index: 1000;">패치노트</button>
     <div id="patchNotesModal" class="modal" style="display:none;">
         <div class="modal-content">
             <span class="close-button" id="closePatchNotesModal">&times;</span>
             <h2>패치노트</h2>
-            <div id="patchNotesContent">
-                </div>
+            <div id="patchNotesContent"></div>
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>

@@ -1,174 +1,380 @@
+/* css/style.css */
+
 body {
-    font-family: Arial, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; /* 좀 더 현대적인 폰트 스택 */
     line-height: 1.6;
     margin: 0;
     padding: 20px;
-    background-color: #f4f4f4;
-    color: #333;
+    background-color: #f8f9fa; /* 약간 더 부드러운 배경색 */
+    color: #212529; /* 기본 글자색 */
 }
 
 .container {
-    max-width: 800px;
-    margin: auto;
-    background: #fff;
-    padding: 20px;
+    max-width: 1400px; /* 테이블 너비를 고려하여 컨테이너 확장 */
+    margin: 20px auto; /* 상하 마진 추가 */
+    background: #ffffff; /* 흰색 배경 */
+    padding: 25px;
     border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 15px rgba(0,0,0,0.08); /* 그림자 약간 조정 */
 }
 
-h1, h2 {
-    color: #333;
+h1, h2, h3 {
+    color: #343a40; /* 제목 색상 조정 */
     text-align: center;
-    margin-bottom: 20px;
+    margin-top: 0; /* 첫번째 제목의 상단 마진 제거 */
+    margin-bottom: 25px;
 }
+
+/* 섹션별 제목 왼쪽 정렬 */
+#word-input-section h2,
+#word-list-section h2,
+#filter-controls h3,
+#wordListContainer h3 {
+    text-align: left;
+    font-size: 1.5em; /* h2와 h3 크기 일관성 있게 */
+    margin-bottom: 15px;
+}
+#wordListContainer h3 {
+    margin-top: 25px; /* 필터 컨트롤과 목록 사이 간격 */
+}
+
 
 #word-input-section, #word-list-section {
-    margin-bottom: 30px;
-    padding: 20px;
-    border: 1px solid #ddd;
+    margin-bottom: 35px;
+    padding: 20px 25px; /* 좌우 패딩 늘림 */
+    border: 1px solid #dee2e6; /* 테두리 색상 연하게 */
     border-radius: 5px;
+    background-color: #fff; /* 섹션 배경 흰색 유지 */
 }
+
+#filter-controls {
+    margin-bottom: 20px;
+    padding: 20px;
+    border: 1px solid #e9ecef;
+    border-radius: 5px;
+    background-color: #f8f9fa; /* 필터 섹션 약간 다른 배경 */
+}
+
 
 label {
     display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
+    margin-bottom: 6px; /* 레이블과 입력 요소 사이 간격 */
+    font-weight: 500; /* 폰트 두께 약간 줄임 */
+    color: #495057;
 }
 
 input[type="text"],
 textarea,
 select {
-    width: calc(100% - 22px); /* padding 고려 */
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #ddd;
+    width: 100%; /* calc 제거하고 100%로 */
+    padding: 10px 12px; /* 패딩 조정 */
+    margin-bottom: 12px; /* 아래쪽 마진 늘림 */
+    border: 1px solid #ced4da;
     border-radius: 4px;
-    box-sizing: border-box; /* 중요 */
+    box-sizing: border-box;
+    font-size: 0.95em;
+}
+input[type="text"]:focus,
+textarea:focus,
+select:focus {
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
 }
 
-textarea {
-    height: 80px;
+/* 각 상세 정보 섹션 내의 div에 대한 스타일 추가 */
+.details-section div, .filter-details-section div {
+    margin-bottom: 10px; /* 각 입력 필드 그룹 간의 간격 */
+}
+
+
+textarea#wordPairs { /* 단어 일괄 입력란 */
+    height: 150px; /* 높이 증가 */
+    resize: vertical;
+}
+textarea#commonMemo {
+    height: 60px;
     resize: vertical;
 }
 
+
+/* 버튼 기본 스타일 */
 button {
     display: inline-block;
-    background-color: #5cb85c;
-    color: white;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 4px;
+    font-weight: 500;
+    color: #ffffff;
+    text-align: center;
+    vertical-align: middle;
     cursor: pointer;
-    font-size: 16px;
-    margin-right: 10px;
+    background-color: #5cb85c; /* 기본 저장 버튼 색상 */
+    border: 1px solid transparent;
+    padding: 0.5rem 1rem; /* 패딩 rem 단위로 변경 */
+    font-size: 0.95rem; /* 폰트 크기 rem 단위 */
+    line-height: 1.5;
+    border-radius: 0.25rem;
+    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+    margin-right: 8px;
+    margin-bottom: 10px; /* 버튼이 여러 줄로 표시될 경우를 대비 */
 }
-
 button:hover {
-    background-color: #4cae4c;
+    opacity: 0.85;
+}
+button:focus {
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(40,167,69,.5); /* 기본 버튼 포커스 스타일 */
+}
+button:last-child { /* 한 줄의 마지막 버튼 */
+    /* margin-right: 0; -> flex/grid 사용 시 불필요 */
 }
 
-#loadWordsBtn, #startTestBtn {
-    display: block; /* 버튼을 블록 요소로 만들어 전체 너비 사용 또는 가운데 정렬 용이 */
-    margin: 20px auto; /* 위아래 마진, 좌우 자동 (가운데 정렬) */
+/* 필터 컨트롤 내 버튼 그룹 스타일 */
+#filter-controls > button { /* 직계 자식 버튼에만 적용 */
+   /* 기존 스타일 유지 */
 }
 
-.details-section input[type="text"],
-.details-section textarea {
-    margin-bottom: 5px; /* 상세 정보 내 입력 필드 간격 조정 */
+#filterWordsBtn {
+    background-color: #17a2b8; /* 정보 버튼 색상 */
+    border-color: #17a2b8;
 }
+#filterWordsBtn:focus {
+    box-shadow: 0 0 0 0.2rem rgba(23,162,184,.5);
+}
+
+
+#loadAllWordsBtn {
+    background-color: #6c757d; /* 보조 버튼 색상 */
+    border-color: #6c757d;
+}
+#loadAllWordsBtn:focus {
+    box-shadow: 0 0 0 0.2rem rgba(108,117,125,.5);
+}
+
+/* '현재 목록으로 테스트 시작' 버튼 스타일 */
+#startTestBtn {
+    background-color: #ffc107; /* 주황색 (경고색) */
+    border-color: #ffc107;
+    color: #212529; /* 어두운 글자색이 더 잘 보일 수 있음 */
+}
+#startTestBtn:hover {
+    background-color: #e0a800;
+    border-color: #d39e00;
+}
+#startTestBtn:focus {
+    box-shadow: 0 0 0 0.2rem rgba(255,193,7,.5);
+}
+
 
 /* 단어 목록 테이블 */
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
+    margin-top: 15px;
+    font-size: 0.9em;
+    table-layout: fixed; /* 테이블 레이아웃 고정 */
 }
 
 th, td {
-    border: 1px solid #ddd;
-    padding: 8px;
+    border: 1px solid #dee2e6;
+    padding-top: 10px;    /* 상하 패딩 약간 줄여보기 (선택적) */
+    padding-bottom: 10px; /* 상하 패딩 약간 줄여보기 (선택적) */
+    padding-left: 8px;
+    padding-right: 8px;
     text-align: left;
+    vertical-align: middle; /* 모든 td의 내용을 기본적으로 세로 가운데 정렬 */
+    word-wrap: break-word;
+    line-height: 1.4;   /* line-height도 약간 줄여보기 (선택적) */
 }
 
 th {
-    background-color: #f2f2f2;
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: #495057;
+    vertical-align: middle; /* 헤더는 이미 middle */
 }
 
-/* 수정/삭제 버튼 */
-.edit-btn, .delete-btn {
-    padding: 5px 8px;
-    font-size: 12px;
-    margin-right: 5px;
+/* 컬럼별 너비 및 가로 정렬 조정 (세로 정렬은 위 td 기본값인 middle을 따름) */
+/* 1. 체크박스 컬럼 */
+table th:nth-child(1), table td:nth-child(1) {
+    width: 4%;
+    text-align: center;
+    /* vertical-align: middle; 은 이미 td 기본값 */
 }
-.edit-btn {
-    background-color: #f0ad4e;
+
+/* 2. 단어 컬럼 - 가로 가운데 정렬 */
+table th:nth-child(2), table td:nth-child(2) {
+    width: 18%;
+    text-align: center;
+    /* vertical-align: middle; 은 이미 td 기본값 */
 }
-.edit-btn:hover {
-    background-color: #ec971f;
+
+/* 3. 뜻 컬럼 - 너비 대폭 확장 */
+table th:nth-child(3), table td:nth-child(3) {
+    width: 33%;
+    text-align: left; /* 뜻은 왼쪽 정렬 유지 */
+    /* vertical-align: middle; 은 이미 td 기본값 */
 }
+
+/* 4. 분류 컬럼 */
+table th:nth-child(4), table td:nth-child(4) {
+    width: 8%;
+    text-align: center;
+    /* vertical-align: middle; 은 이미 td 기본값 */
+}
+
+/* 5. 상세정보 컬럼 - 가로 가운데 정렬 */
+table th:nth-child(5), table td:nth-child(5) {
+    width: 25%;
+    min-width: 180px;
+    text-align: center;
+    /* vertical-align: middle; 은 이미 td 기본값 */
+}
+
+/* 6. 공통메모 컬럼 */
+table th:nth-child(6), table td:nth-child(6) {
+    width: 7%;
+    text-align: left; /* 메모도 왼쪽 정렬 유지 */
+    /* vertical-align: middle; 은 이미 td 기본값 */
+}
+
+/* 7. 관리 컬럼 */
+table th:nth-child(7), table td:nth-child(7) {
+    width: 5%;
+    text-align: center;
+    /* vertical-align: middle; 은 이미 td 기본값 */
+}
+
+
+/* 삭제 버튼 (수정 버튼은 JS에서 제거됨) */
 .delete-btn {
-    background-color: #d9534f;
+    background-color: #dc3545;
+    border-color: #dc3545;
+    padding: 0.25rem 0.5rem; /* 작은 버튼 패딩 */
+    font-size: 0.8rem;
 }
 .delete-btn:hover {
-    background-color: #c9302c;
+    background-color: #c82333;
+    border-color: #bd2130;
+}
+.delete-btn:focus {
+    box-shadow: 0 0 0 0.2rem rgba(220,53,69,.5);
+}
+/* 버튼 그룹 내 버튼들 스타일 */
+.button-group button {
+    margin-bottom: 10px; /* 그룹 내 버튼들 하단 마진 일관성 */
 }
 
-/* css/style.css 파일 하단에 추가 */
 
-/* 패치노트 버튼 (HTML에 인라인 스타일로도 일부 적용됨, 여기서 추가/수정 가능) */
+/* '선택 단어 일괄 삭제' 버튼 스타일 */
+#deleteSelectedBtn {
+    background-color: #dc3545; /* 삭제 버튼 기본 색상 (빨강) */
+    border-color: #dc3545;
+}
+#deleteSelectedBtn:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+}
+#deleteSelectedBtn:focus {
+    box-shadow: 0 0 0 0.2rem rgba(220,53,69,.5);
+}
+
+
+/* 단어 목록 테이블 체크박스 컬럼 */
+table th:first-child, /* 전체 선택 체크박스 칸 */
+table td:first-child { /* 개별 선택 체크박스 칸 */
+    width: 5%; /* 너비 최소화 */
+    text-align: center;
+}
+
+/* 테이블 내 체크박스 스타일 (선택 사항) */
+table input[type="checkbox"] {
+    cursor: pointer;
+    width: auto; /* 체크박스 기본 너비 사용 */
+    margin: 0; /* 불필요한 마진 제거 */
+    vertical-align: middle;
+}
+
+/* 관리 컬럼 너비 조정 (삭제 버튼 하나만 남으므로) */
+/* 1:체크, 2:단어, 3:뜻, 4:분류, 5:상세정보, 6:공통메모, 7:관리 */
+table th:nth-child(1), table td:nth-child(1) { width: 4%; text-align: center; } /* 체크박스 */
+table th:nth-child(2), table td:nth-child(2) { width: 18%; } /* 단어 */
+table th:nth-child(3), table td:nth-child(3) { width: 25%; } /* 뜻 */
+table th:nth-child(4), table td:nth-child(4) { width: 10%; text-align: center;} /* 분류 */
+table th:nth-child(5), table td:nth-child(5) {
+    width: 23%; /* 상세정보 컬럼 너비 */
+    min-width: 180px;
+    word-wrap: break-word;
+}
+table th:nth-child(6), table td:nth-child(6) { width: 15%; } /* 공통메모 */
+table th:nth-child(7), table td:nth-child(7) { width: 5%; text-align: center;} /* 관리 */
+
+
+/* 패치노트 버튼 (HTML에 인라인 스타일로도 일부 적용됨) */
+#patchNotesBtn {
+    background-color: #007bff;
+    border-color: #007bff;
+}
 #patchNotesBtn:hover {
-    background-color: #0056b3;
+    background-color: #0069d9;
+    border-color: #0062cc;
 }
+#patchNotesBtn:focus {
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.5);
+}
+
 
 /* 모달 기본 스타일 */
 .modal {
-    display: none; /* 초기에는 숨김 */
-    position: fixed; /* 화면 전체를 덮도록 */
-    z-index: 1001; /* 버튼보다 위에 오도록 */
+    display: none;
+    position: fixed;
+    z-index: 1050; /* 부트스트랩 모달 z-index 참고 */
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    overflow: auto; /* 내용이 길면 스크롤 */
-    background-color: rgba(0,0,0,0.4); /* 반투명 배경 */
-    padding-top: 60px; /* 상단 여백 */
+    overflow-x: hidden;
+    overflow-y: auto;
+    background-color: rgba(0,0,0,0.5);
+    padding-top: 30px; /* 상단 여백 줄임 */
 }
 
 .modal-content {
     background-color: #fefefe;
-    margin: 5% auto; /* 수직 중앙 정렬 (대략적) 및 수평 중앙 */
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%; /* 너비 */
-    max-width: 700px; /* 최대 너비 */
-    border-radius: 8px;
+    margin: 1.75rem auto; /* 부트스트랩 모달 마진 참고 */
+    padding: 25px;
+    border: 1px solid rgba(0,0,0,.2);
+    width: 90%;
+    max-width: 700px;
+    border-radius: 0.3rem;
     position: relative;
+    box-shadow: 0 0.5rem 1rem rgba(0,0,0,.5);
 }
 
-/* 닫기 버튼 (X) */
 .close-button {
-    color: #aaa;
+    color: #6c757d;
     float: right;
-    font-size: 28px;
-    font-weight: bold;
+    font-size: 1.5rem; /* 크기 조정 */
+    font-weight: 700;
+    line-height: 1;
+    text-shadow: 0 1px 0 #fff;
+    opacity: .5;
     position: absolute;
-    top: 10px;
+    top: 15px; /* 위치 조정 */
     right: 20px;
 }
-
 .close-button:hover,
 .close-button:focus {
-    color: black;
+    color: #000;
     text-decoration: none;
     cursor: pointer;
+    opacity: .75;
 }
 
-/* 패치노트 내용 스타일 */
 #patchNotesContent h3 {
-    margin-top: 20px;
-    margin-bottom: 5px;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 5px;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 0.5rem;
+    font-size: 1.25rem;
 }
 #patchNotesContent h3:first-child {
     margin-top: 0;
@@ -177,7 +383,9 @@ th {
     list-style-type: disc;
     margin-left: 20px;
     padding-left: 0;
+    margin-bottom: 1rem; /* 목록 하단 여백 */
 }
 #patchNotesContent li {
-    margin-bottom: 5px;
+    margin-bottom: 0.3rem;
+    line-height: 1.5;
 }
