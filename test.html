@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>단어 테스트</title>
+    <link rel="stylesheet" href="css/style.css"> <link rel="stylesheet" href="css/test-style.css"> </head>
+<body>
+    <div class="test-container">
+        <div id="test-setup">
+            <h1>단어 테스트</h1>
+            <p>테스트할 단어 준비 완료! (총 <span id="wordCount">0</span>개)</p>
+            <button id="beginTestBtn">테스트 시작!</button>
+        </div>
+
+        <div id="test-in-progress" style="display:none;">
+            <div class="test-content-wrapper">
+                <div id="timerDisplayWrapper">
+                    <span class="timer-icon">⏰</span>
+                    <span id="wordTimerDisplay">0</span>
+                </div>
+                <div id="wordDisplayArea">
+                    <p id="currentWord"></p>
+                </div>
+            </div>
+        </div>
+
+        <div id="blankScreen" style="display:none;">
+            <div class="test-content-wrapper black-screen-content">
+                <div id="blankTimerDisplayWrapper">
+                    <span class="timer-icon">⏰</span>
+                    <span id="blankTimerDisplay">0</span>
+                </div>
+                <p id="blankScreenMessage">뜻을 적어주세요!</p>
+            </div>
+        </div>
+
+        <div id="test-results" style="display:none;">
+            <h2>테스트 결과</h2>
+            <p>수고하셨습니다! 아래는 테스트한 단어와 뜻입니다.</p>
+            <table id="answerTable">
+                <thead>
+                    <tr>
+                        <th>번호</th>
+                        <th>단어</th>
+                        <th>뜻</th>
+                    </tr>
+                </thead>
+                <tbody id="answerTableBody">
+                    </tbody>
+            </table>
+            <button onclick="window.close()" style="margin-top: 20px;">창 닫기</button>
+        </div>
+    </div>
+
+    <audio id="transitionSound" src="assets/transition_sound.mp3" preload="auto"></audio>
+
+    <script src="js/test.js"></script>
+</body>
+</html>

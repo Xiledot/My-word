@@ -1,0 +1,183 @@
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 20px;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+.container {
+    max-width: 800px;
+    margin: auto;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+h1, h2 {
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+#word-input-section, #word-list-section {
+    margin-bottom: 30px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+input[type="text"],
+textarea,
+select {
+    width: calc(100% - 22px); /* padding 고려 */
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box; /* 중요 */
+}
+
+textarea {
+    height: 80px;
+    resize: vertical;
+}
+
+button {
+    display: inline-block;
+    background-color: #5cb85c;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-right: 10px;
+}
+
+button:hover {
+    background-color: #4cae4c;
+}
+
+#loadWordsBtn, #startTestBtn {
+    display: block; /* 버튼을 블록 요소로 만들어 전체 너비 사용 또는 가운데 정렬 용이 */
+    margin: 20px auto; /* 위아래 마진, 좌우 자동 (가운데 정렬) */
+}
+
+.details-section input[type="text"],
+.details-section textarea {
+    margin-bottom: 5px; /* 상세 정보 내 입력 필드 간격 조정 */
+}
+
+/* 단어 목록 테이블 */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+/* 수정/삭제 버튼 */
+.edit-btn, .delete-btn {
+    padding: 5px 8px;
+    font-size: 12px;
+    margin-right: 5px;
+}
+.edit-btn {
+    background-color: #f0ad4e;
+}
+.edit-btn:hover {
+    background-color: #ec971f;
+}
+.delete-btn {
+    background-color: #d9534f;
+}
+.delete-btn:hover {
+    background-color: #c9302c;
+}
+
+/* css/style.css 파일 하단에 추가 */
+
+/* 패치노트 버튼 (HTML에 인라인 스타일로도 일부 적용됨, 여기서 추가/수정 가능) */
+#patchNotesBtn:hover {
+    background-color: #0056b3;
+}
+
+/* 모달 기본 스타일 */
+.modal {
+    display: none; /* 초기에는 숨김 */
+    position: fixed; /* 화면 전체를 덮도록 */
+    z-index: 1001; /* 버튼보다 위에 오도록 */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto; /* 내용이 길면 스크롤 */
+    background-color: rgba(0,0,0,0.4); /* 반투명 배경 */
+    padding-top: 60px; /* 상단 여백 */
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto; /* 수직 중앙 정렬 (대략적) 및 수평 중앙 */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* 너비 */
+    max-width: 700px; /* 최대 너비 */
+    border-radius: 8px;
+    position: relative;
+}
+
+/* 닫기 버튼 (X) */
+.close-button {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* 패치노트 내용 스타일 */
+#patchNotesContent h3 {
+    margin-top: 20px;
+    margin-bottom: 5px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
+}
+#patchNotesContent h3:first-child {
+    margin-top: 0;
+}
+#patchNotesContent ul {
+    list-style-type: disc;
+    margin-left: 20px;
+    padding-left: 0;
+}
+#patchNotesContent li {
+    margin-bottom: 5px;
+}
