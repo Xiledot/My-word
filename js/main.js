@@ -381,6 +381,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
+    // 단어별 선택으로 테스트 시작
     startTestBtn.addEventListener('click', function() {
         const checkboxes = document.querySelectorAll('#wordTableBody input[type="checkbox"]:checked');
         if (checkboxes.length === 0) {
@@ -400,8 +401,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // 테스트용 단어를 localStorage에 저장
         localStorage.setItem('wordsForTest', JSON.stringify(selectedWords));
         
-        // 새 창에서 테스트 페이지 열기
-        window.open('test.html', '_blank', 'width=800,height=600');
+        // 새 탭에서 테스트 페이지 열기 (팝업이 아닌 새 탭으로 변경)
+        window.open('test.html', '_blank');
     });
 
     const patchNotesBtn = document.getElementById('patchNotesBtn');
@@ -570,8 +571,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // 테스트용 단어를 localStorage에 저장
         localStorage.setItem('wordsForTest', JSON.stringify(selectedUnitWords));
         
-        // 새 창에서 테스트 페이지 열기
-        window.open('test.html', '_blank', 'width=800,height=600');
+        // 새 탭에서 테스트 페이지 열기 (팝업이 아닌 새 탭으로 변경)
+        window.open('test.html', '_blank');
     });
 
     loadWords();
