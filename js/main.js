@@ -82,6 +82,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const selectedWordCountSpan = document.getElementById('selectedWordCount');
     const selectedWordsInfo = document.getElementById('selectedWordsInfo');
 
+    // 유닛 선택 관련 요소
+    const availableUnitsDiv = document.getElementById('availableUnits');
+    const testSelectedUnitsBtn = document.getElementById('testSelectedUnitsBtn');
+    const selectedUnitCountSpan = document.getElementById('selectedUnitCount');
+    const unitWordCountSpan = document.getElementById('unitWordCount');
+    const selectedUnitsInfo = document.getElementById('selectedUnitsInfo');
+    
+    // 유닛별 단어 저장 객체
+    let unitWordMap = {};
+    
     // 테스트 버튼 초기 상태 설정
     startTestBtn.style.display = 'none';
 
@@ -270,6 +280,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // 전역 변수로 현재 표시된 단어 목록 저장
         currentDisplayedWords = words;
         
+        // 유닛 정보 추출 및 렌더링
+        extractAndRenderUnits(words);
+        
         if (words.length > 0) {
             words.forEach(word => {
                 const row = wordTableBody.insertRow(); 
@@ -412,6 +425,154 @@ document.addEventListener('DOMContentLoaded', () => {
     if (patchNotesBtn) patchNotesBtn.addEventListener('click', displayPatchNotes);
     if (closePatchNotesModalBtn) closePatchNotesModalBtn.addEventListener('click', () => patchNotesModal.style.display = 'none');
     window.addEventListener('click', (e) => { if (e.target == patchNotesModal) patchNotesModal.style.display = 'none'; });
+
+    // 단어 목록에서 유닛 정보 추출 및 렌더링
+    function extractAndRenderUnits(words) {
+        // 유닛 정보 초기화
+        unitWordMap = {};
+        availableUnitsDiv.innerHTML = '';
+        testSelectedUnitsBtn.disabled = true;
+        selectedUnitsInfo.style.display = 'none';
+        
+        if (words.length === 0) {
+            availableUnitsDiv.innerHTML = '<div class="no-units-message">표시할 단어가 없습니다.</div>';
+            return;
+        }
+        
+        // 단어에서 유닛 정보 추출
+        words.forEach(word => {
+            let unitName = '기타';
+            
+            if (word.category === 'textbook' && word.details) {
+                const parts = [];
+                if (word.details.grade) parts.push(word.details.grade);
+                if (word.details.publisher) parts.push(word.details.publisher);
+                if (word.details.lesson) parts.push(word.details.lesson);
+                
+                if (parts.length > 0) {
+                    unitName = parts.join(' / ');
+                }
+            } else if (word.category === 'workbook' && word.details) {
+                const parts = [];
+                if (word.details.publisher) parts.push(word.details.publisher);
+                if (word.details.name) parts.push(word.details.name);
+                if (word.details.unit) parts.push(word.details.unit);
+                if (word.details.passage_number) parts.push(word.details.passage_number);
+                
+                if (parts.length > 0) {
+                    unitName = parts.join(' / ');
+                }
+            } else if (word.category === 'mock_exam' && word.details) {
+                const parts = [];
+                if (word.details.grade) parts.push(word.details.grade);
+                if (word.details.year) parts.push(word.details.year);
+                if (word.details.month) parts.push(word.details.month);
+                if (word.details.number) parts.push(word.details.number);
+                
+                if (parts.length > 0) {
+                    unitName = parts.join(' / ');
+                }
+            } else if (word.category === 'external' && word.details) {
+                const parts = [];
+                if (word.details.school) parts.push(word.details.school);
+                if (word.details.grade) parts.push(word.details.grade);
+                if (word.details.name) parts.push(word.details.name);
+                
+                if (parts.length > 0) {
+                    unitName = parts.join(' / ');
+                }
+            } else if (word.category === 'etc' && word.details && word.details.memo) {
+                unitName = word.details.memo.length > 20 ? 
+                    word.details.memo.substring(0, 20) + '...' : word.details.memo;
+            }
+            
+            if (!unitWordMap[unitName]) {
+                unitWordMap[unitName] = [];
+            }
+            
+            unitWordMap[unitName].push(word);
+        });
+        
+        // 유닛 렌더링
+        const unitNames = Object.keys(unitWordMap).sort();
+        
+        if (unitNames.length === 0) {
+            availableUnitsDiv.innerHTML = '<div class="no-units-message">분류 가능한 유닛이 없습니다.</div>';
+            return;
+        }
+        
+        unitNames.forEach(unitName => {
+            const unitCount = unitWordMap[unitName].length;
+            const unitDiv = document.createElement('div');
+            unitDiv.className = 'unit-item';
+            unitDiv.innerHTML = `
+                <label>
+                    <input type="checkbox" class="unit-checkbox" data-unit="${unitName}">
+                    ${unitName} (${unitCount}개 단어)
+                </label>
+            `;
+            availableUnitsDiv.appendChild(unitDiv);
+        });
+        
+        // 유닛 체크박스 이벤트 처리
+        const unitCheckboxes = availableUnitsDiv.querySelectorAll('.unit-checkbox');
+        unitCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', updateUnitSelection);
+        });
+    }
+    
+    // 선택된 유닛 정보 업데이트
+    function updateUnitSelection() {
+        const selectedUnitCheckboxes = availableUnitsDiv.querySelectorAll('.unit-checkbox:checked');
+        const selectedUnitCount = selectedUnitCheckboxes.length;
+        
+        // 선택된 유닛 개수와 포함된 단어 수 계산
+        let totalWords = 0;
+        const selectedUnitNames = Array.from(selectedUnitCheckboxes).map(cb => cb.dataset.unit);
+        
+        selectedUnitNames.forEach(unitName => {
+            if (unitWordMap[unitName]) {
+                totalWords += unitWordMap[unitName].length;
+            }
+        });
+        
+        // UI 업데이트
+        selectedUnitCountSpan.textContent = selectedUnitCount;
+        unitWordCountSpan.textContent = totalWords;
+        selectedUnitsInfo.style.display = selectedUnitCount > 0 ? 'inline' : 'none';
+        testSelectedUnitsBtn.disabled = selectedUnitCount === 0;
+    }
+    
+    // 선택된 유닛으로 테스트 시작
+    testSelectedUnitsBtn.addEventListener('click', function() {
+        const selectedUnitCheckboxes = availableUnitsDiv.querySelectorAll('.unit-checkbox:checked');
+        
+        if (selectedUnitCheckboxes.length === 0) {
+            alert('테스트할 유닛을 선택해주세요.');
+            return;
+        }
+        
+        // 선택된 유닛에 속한 단어 수집
+        const selectedUnitWords = [];
+        const selectedUnitNames = Array.from(selectedUnitCheckboxes).map(cb => cb.dataset.unit);
+        
+        selectedUnitNames.forEach(unitName => {
+            if (unitWordMap[unitName]) {
+                selectedUnitWords.push(...unitWordMap[unitName]);
+            }
+        });
+        
+        if (selectedUnitWords.length === 0) {
+            alert('선택된 유닛에 포함된 단어가 없습니다.');
+            return;
+        }
+        
+        // 테스트용 단어를 localStorage에 저장
+        localStorage.setItem('wordsForTest', JSON.stringify(selectedUnitWords));
+        
+        // 새 창에서 테스트 페이지 열기
+        window.open('test.html', '_blank', 'width=800,height=600');
+    });
 
     loadWords();
     toggleDetailSection(categorySelect, 'details-', 'details-section');

@@ -389,3 +389,61 @@ table th:nth-child(7), table td:nth-child(7) { width: 5%; text-align: center;} /
     margin-bottom: 0.3rem;
     line-height: 1.5;
 }
+
+/* 유닛 선택 스타일 */
+#unitSelectionSection {
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 20px;
+}
+
+#unitSelectionSection h3 {
+    margin-top: 0;
+    color: #2c3e50;
+}
+
+.unit-item {
+    padding: 8px;
+    border-bottom: 1px solid #eee;
+}
+
+.unit-item:last-child {
+    border-bottom: none;
+}
+
+.unit-item label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.unit-item input[type="checkbox"] {
+    margin-right: 10px;
+}
+
+.no-units-message {
+    color: #7f8c8d;
+    font-style: italic;
+    padding: 10px 0;
+}
+
+#testSelectedUnitsBtn {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+#testSelectedUnitsBtn:disabled {
+    background-color: #bdc3c7;
+    cursor: not-allowed;
+}
+
+#selectedUnitsInfo {
+    color: #2c3e50;
+    font-weight: bold;
+}
