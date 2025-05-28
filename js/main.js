@@ -1,10 +1,13 @@
 // js/main.js
 
 // Supabase 클라이언트 설정
-const SUPABASE_URL = 'https://uyrcdqdbohygfdiuzkno.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV5cmNkcWRib2h5Z2ZkaXV6a25vIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyODM3MzksImV4cCI6MjA2Mjg1OTczOX0.jj0spqQ2W4LFrzNZ8dSlouJff7Yx-vEelhwTNar2C5U';
+const SUPABASE_URL = 'https://uyrcdqdbohygfdiuzkno.supabase.co'; // 실제 값으로!
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV5cmNkcWRib2h5Z2ZkaXV6a25vIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyODM3MzksImV4cCI6MjA2Mjg1OTczOX0.jj0spqQ2W4LFrzNZ8dSlouJff7Yx-vEelhwTNar2C5U'; // 실제 값으로!
 
 let supabaseClient;
+// 현재 표시된 단어 목록을 저장하는 전역 변수
+let currentDisplayedWords = [];
+
 try {
     if (window.supabase && typeof window.supabase.createClient === 'function') {
         supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -24,9 +27,9 @@ const textbookData = {
     "공통영어": { publishers: ["능률(민병천)", "능률(오선영)", "YBM(박준언)", "YBM(김은형)", "미래엔(김성연)", "동아(이병민)", "비상(홍민표)", "지학사(신상근)", "천재(강상구)", "천재(조수경)"], lessons: ["1과", "2과", "3과", "4과", "5과", "6과", "7과", "8과", "Special Lesson 1", "Special Lesson 2"] },
     "영어1": { publishers: ["금성(최인철)", "능률(김성곤)", "동아(권혁승)", "비상(홍민표)", "천재(이재영)", "교학사(강문구)", "다락원(김길중)", "지학사(민찬규)", "YBM(박준언)", "YBM(한상호)"], lessons: ["1과", "2과", "3과", "4과", "5과", "6과", "7과", "8과", "Special Lesson 1", "Special Lesson 2"] },
     "영어2": { publishers: ["금성(최인철)", "능률(김성곤)", "동아(권혁승)", "비상(홍민표)", "천재(이재영)", "다락원(김길중)", "지학사(민찬규)", "YBM(박준언)", "YBM(한상호)"], lessons: ["1과", "2과", "3과", "4과", "5과", "6과", "Special Lesson"] },
-    "영어 독해와 작문": { publishers: ["NE능률(양현권)", "YBM(박준언)", "비상(홍민표)", "지학사(김상호)", "천재(김태영)", "기타"], lessons: ["1과", "2과", "3과", "4과", "5과", "6과", "Special Topic"] } // "지학사(김상L이하)" -> "지학사(김상호)"로 임의 수정
+    "영어 독해와 작문": { publishers: ["NE능률(양현권)", "YBM(박준언)", "비상(홍민표)", "지학사(김상호)", "천재(김태영)", "기타"], lessons: ["1과", "2과", "3과", "4과", "5과", "6과", "Special Topic"] }
 };
-const textbookGrades = Object.keys(textbookData); // 학년 목록 자동 생성
+const textbookGrades = Object.keys(textbookData);
 
 const mockExamDatabase = {
     "고1": { "2021년": ["3월", "6월", "9월", "11월"], "2022년": ["3월", "6월", "9월", "11월"], "2023년": ["3월", "6월", "9월", "11월"], "2024년": ["3월", "6월", "9월", "10월"], "2025년": ["3월", "6월", "9월"] },
@@ -34,7 +37,6 @@ const mockExamDatabase = {
     "고3": { "2021년": ["3월", "6월", "9월", "10월", "11월(수능)"], "2022년": ["3월", "6월", "9월", "10월", "11월(수능)"], "2023년": ["3월", "6월", "9월", "10월", "11월(수능)"], "2024년": ["3월", "6월", "7월", "9월", "10월", "11월(수능)"], "2025년": ["3월", "5월", "6월", "9월"] }
 };
 const mockExamGrades = Object.keys(mockExamDatabase);
-const mockExamYears = ["2025년", "2024년", "2023년", "2022년", "2021년"]; // 전체 년도 목록 (최신순)
 
 const workbookDatabase = {
     "EBS": ["2026 수능특강 영어 (2025)", "2026 수능특강 영어독해연습 (2025)", "수능특강 Light 영어 (2022)", "수능 감 잡기 영어영역 (2020)", "2025 올림포스 전국연합학력평가 기출문제집 영어독해(고1)", "2025 올림포스 전국연합학력평가 기출문제집 영어독해(고2)", "올림포스 영어독해의 기본1", "올림포스 영어독해의 기본2", "하루 6개 1등급 영어독해 고2 (2023)"],
@@ -44,16 +46,13 @@ const workbookDatabase = {
 };
 const workbookPublishers = Object.keys(workbookDatabase);
 
-
 document.addEventListener('DOMContentLoaded', () => {
     if (!supabaseClient) { return; }
 
-    // --- DOM 요소 가져오기 ---
     const wordForm = document.getElementById('wordForm');
     const wordPairsTextarea = document.getElementById('wordPairs');
-    const categorySelect = document.getElementById('category'); // 입력 폼의 분류
+    const categorySelect = document.getElementById('category');
 
-    // 입력 폼 상세 요소
     const tbGradeSelect = document.getElementById('tb_grade');
     const tbPublisherSelect = document.getElementById('tb_publisher');
     const tbLessonSelect = document.getElementById('tb_lesson');
@@ -63,7 +62,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const meYearSelect = document.getElementById('me_year');
     const meMonthSelect = document.getElementById('me_month');
 
-    // 필터 폼 요소
     const filterCategorySelect = document.getElementById('filterCategory');
     const filterTbGradeSelect = document.getElementById('filter_tb_grade');
     const filterTbPublisherSelect = document.getElementById('filter_tb_publisher');
@@ -74,7 +72,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const filterMeYearSelect = document.getElementById('filter_me_year');
     const filterMeMonthSelect = document.getElementById('filter_me_month');
 
-    // 버튼 및 목록 관련 요소
     const filterWordsBtn = document.getElementById('filterWordsBtn');
     const loadAllWordsBtn = document.getElementById('loadAllWordsBtn');
     const deleteSelectedBtn = document.getElementById('deleteSelectedBtn');
@@ -82,130 +79,75 @@ document.addEventListener('DOMContentLoaded', () => {
     const displayedWordCountSpan = document.getElementById('displayedWordCount');
     const startTestBtn = document.getElementById('startTestBtn');
     const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+    const selectedWordCountSpan = document.getElementById('selectedWordCount');
+    const selectedWordsInfo = document.getElementById('selectedWordsInfo');
 
-    // --- 유틸리티 함수: 드롭다운 옵션 채우기 ---
+    // 테스트 버튼 초기 상태 설정
+    startTestBtn.style.display = 'none';
+
     function populateDropdown(selectElement, options, defaultOptionText = "-- 선택 --") {
-        selectElement.innerHTML = `<option value="">${defaultOptionText}</option>`; // 기존 옵션 초기화 및 기본 옵션 추가
+        selectElement.innerHTML = `<option value="">${defaultOptionText}</option>`;
         options.forEach(optionValue => {
             const option = document.createElement('option');
-            option.value = optionValue;
-            option.textContent = optionValue;
+            option.value = optionValue; option.textContent = optionValue;
             selectElement.appendChild(option);
         });
     }
 
-    // --- 초기 드롭다운 채우기 ---
-    // 교과서 학년
     populateDropdown(tbGradeSelect, textbookGrades, "-- 학년 선택 --");
     populateDropdown(filterTbGradeSelect, textbookGrades, "-- 전체 학년 --");
-    // 부교재 출판사
     populateDropdown(wbPublisherSelect, workbookPublishers, "-- 출판사 선택 --");
     populateDropdown(filterWbPublisherSelect, workbookPublishers, "-- 전체 출판사 --");
-    // 모의고사 학년
     populateDropdown(meGradeSelect, mockExamGrades, "-- 학년 선택 --");
     populateDropdown(filterMeGradeSelect, mockExamGrades, "-- 전체 학년 --");
 
-
-    // --- 연동형 드롭다운 로직 ---
-    // 입력 폼: 교과서 학년 -> 출판사 -> 단원
     tbGradeSelect.addEventListener('change', function() {
         const selectedGrade = this.value;
-        if (selectedGrade && textbookData[selectedGrade]) {
-            populateDropdown(tbPublisherSelect, textbookData[selectedGrade].publishers, "-- 출판사 선택 --");
-            populateDropdown(tbLessonSelect, textbookData[selectedGrade].lessons, "-- 단원 선택 --"); // 학년별 공통 단원 목록
-        } else {
-            populateDropdown(tbPublisherSelect, [], "-- 학년 먼저 선택 --");
-            populateDropdown(tbLessonSelect, [], "-- 출판사 먼저 선택 --");
-        }
+        populateDropdown(tbPublisherSelect, selectedGrade && textbookData[selectedGrade] ? textbookData[selectedGrade].publishers : [], "-- 출판사 선택 --");
+        populateDropdown(tbLessonSelect, selectedGrade && textbookData[selectedGrade] ? textbookData[selectedGrade].lessons : [], "-- 단원 선택 --");
     });
-    // 참고: 교과서에서 출판사 선택 시 단원 목록이 달라진다면, tbPublisherSelect에도 change 리스너 추가 필요
-
-    // 입력 폼: 부교재 출판사 -> 부교재명
     wbPublisherSelect.addEventListener('change', function() {
         const selectedPublisher = this.value;
-        if (selectedPublisher && workbookDatabase[selectedPublisher]) {
-            populateDropdown(wbNameSelect, workbookDatabase[selectedPublisher], "-- 부교재명 선택 --");
-        } else {
-            populateDropdown(wbNameSelect, [], "-- 출판사 먼저 선택 --");
-        }
+        populateDropdown(wbNameSelect, selectedPublisher && workbookDatabase[selectedPublisher] ? workbookDatabase[selectedPublisher] : [], "-- 부교재명 선택 --");
     });
-
-    // 입력 폼: 모의고사 학년 -> 년도 -> 월
     meGradeSelect.addEventListener('change', function() {
         const selectedGrade = this.value;
-        if (selectedGrade && mockExamDatabase[selectedGrade]) {
-            const yearsForGrade = Object.keys(mockExamDatabase[selectedGrade]).sort((a,b) => parseInt(b) - parseInt(a)); // 년도 최신순
-            populateDropdown(meYearSelect, yearsForGrade, "-- 년도 선택 --");
-            populateDropdown(meMonthSelect, [], "-- 년도 먼저 선택 --");
-        } else {
-            populateDropdown(meYearSelect, [], "-- 학년 먼저 선택 --");
-            populateDropdown(meMonthSelect, [], "-- 년도 먼저 선택 --");
-        }
+        populateDropdown(meYearSelect, selectedGrade && mockExamDatabase[selectedGrade] ? Object.keys(mockExamDatabase[selectedGrade]).sort((a,b) => parseInt(b) - parseInt(a)) : [], "-- 년도 선택 --");
+        populateDropdown(meMonthSelect, [], "-- 년도 먼저 선택 --");
     });
     meYearSelect.addEventListener('change', function() {
         const selectedGrade = meGradeSelect.value;
         const selectedYear = this.value;
-        if (selectedGrade && selectedYear && mockExamDatabase[selectedGrade] && mockExamDatabase[selectedGrade][selectedYear]) {
-            populateDropdown(meMonthSelect, mockExamDatabase[selectedGrade][selectedYear], "-- 월 선택 --");
-        } else {
-            populateDropdown(meMonthSelect, [], "-- 년도 먼저 선택 --");
-        }
+        populateDropdown(meMonthSelect, selectedGrade && selectedYear && mockExamDatabase[selectedGrade]?.[selectedYear] ? mockExamDatabase[selectedGrade][selectedYear] : [], "-- 월 선택 --");
     });
-
-    // 필터 폼: 교과서 학년 -> 출판사 -> 단원
     filterTbGradeSelect.addEventListener('change', function() {
         const selectedGrade = this.value;
-        if (selectedGrade && textbookData[selectedGrade]) {
-            populateDropdown(filterTbPublisherSelect, textbookData[selectedGrade].publishers, "-- 전체 출판사 --");
-            populateDropdown(filterTbLessonSelect, textbookData[selectedGrade].lessons, "-- 전체 단원 --");
-        } else {
-            populateDropdown(filterTbPublisherSelect, [], "-- 전체 출판사 (학년 선택) --");
-            populateDropdown(filterTbLessonSelect, [], "-- 전체 단원 (학년 선택) --");
-        }
+        populateDropdown(filterTbPublisherSelect, selectedGrade && textbookData[selectedGrade] ? textbookData[selectedGrade].publishers : [], "-- 전체 출판사 --");
+        populateDropdown(filterTbLessonSelect, selectedGrade && textbookData[selectedGrade] ? textbookData[selectedGrade].lessons : [], "-- 전체 단원 --");
     });
-
-    // 필터 폼: 부교재 출판사 -> 부교재명
     filterWbPublisherSelect.addEventListener('change', function() {
         const selectedPublisher = this.value;
-        if (selectedPublisher && workbookDatabase[selectedPublisher]) {
-            populateDropdown(filterWbNameSelect, workbookDatabase[selectedPublisher], "-- 전체 부교재 --");
-        } else {
-            populateDropdown(filterWbNameSelect, [], "-- 전체 부교재 (출판사 선택) --");
-        }
+        populateDropdown(filterWbNameSelect, selectedPublisher && workbookDatabase[selectedPublisher] ? workbookDatabase[selectedPublisher] : [], "-- 전체 부교재 --");
     });
-
-    // 필터 폼: 모의고사 학년 -> 년도 -> 월
     filterMeGradeSelect.addEventListener('change', function() {
         const selectedGrade = this.value;
-        if (selectedGrade && mockExamDatabase[selectedGrade]) {
-            const yearsForGrade = Object.keys(mockExamDatabase[selectedGrade]).sort((a,b) => parseInt(b) - parseInt(a));
-            populateDropdown(filterMeYearSelect, yearsForGrade, "-- 전체 년도 --");
-            populateDropdown(filterMeMonthSelect, [], "-- 전체 월 (년도 선택) --");
-        } else {
-            populateDropdown(filterMeYearSelect, [], "-- 전체 년도 (학년 선택) --");
-            populateDropdown(filterMeMonthSelect, [], "-- 전체 월 (년도 선택) --");
-        }
+        populateDropdown(filterMeYearSelect, selectedGrade && mockExamDatabase[selectedGrade] ? Object.keys(mockExamDatabase[selectedGrade]).sort((a,b) => parseInt(b) - parseInt(a)) : [], "-- 전체 년도 --");
+        populateDropdown(filterMeMonthSelect, [], "-- 전체 월 (년도 선택) --");
     });
     filterMeYearSelect.addEventListener('change', function() {
         const selectedGrade = filterMeGradeSelect.value;
         const selectedYear = this.value;
-        if (selectedGrade && selectedYear && mockExamDatabase[selectedGrade] && mockExamDatabase[selectedGrade][selectedYear]) {
-            populateDropdown(filterMeMonthSelect, mockExamDatabase[selectedGrade][selectedYear], "-- 전체 월 --");
-        } else {
-            populateDropdown(filterMeMonthSelect, [], "-- 전체 월 (년도 선택) --");
-        }
+        populateDropdown(filterMeMonthSelect, selectedGrade && selectedYear && mockExamDatabase[selectedGrade]?.[selectedYear] ? mockExamDatabase[selectedGrade][selectedYear] : [], "-- 전체 월 --");
     });
 
-
-    // --- 상세 정보 섹션 표시/숨김 로직 ---
     function toggleDetailSection(selectElement, sectionPrefix, detailsSectionsClass) {
-        // ... (이전과 동일한 함수 내용) ...
         document.querySelectorAll(`.${detailsSectionsClass}`).forEach(section => {
             section.style.display = 'none';
-            if (detailsSectionsClass === 'details-section') { // 입력폼의 경우만 내부 필드 초기화
+            if (detailsSectionsClass === 'details-section') {
                  section.querySelectorAll('select, input[type="text"], textarea').forEach(el => {
-                    if (el.tagName === 'SELECT' && el.id !== 'tb_grade' && el.id !== 'wb_publisher' && el.id !== 'me_grade') { // 첫번째 연동 select는 제외
-                        populateDropdown(el, [], el.options[0].textContent); // 하위 select는 비우기
+                    const firstLevelDropdowns = ['tb_grade', 'wb_publisher', 'me_grade'];
+                    if (el.tagName === 'SELECT' && !firstLevelDropdowns.includes(el.id)) {
+                        populateDropdown(el, [], el.options[0]?.textContent || "-- 선택 --");
                     } else if (el.tagName !== 'SELECT') {
                         el.value = '';
                     }
@@ -215,24 +157,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const selectedValue = selectElement.value;
         if (selectedValue) {
             const detailSection = document.getElementById(`${sectionPrefix}${selectedValue}`);
-            if (detailSection) {
-                detailSection.style.display = 'block';
-            }
+            if (detailSection) { detailSection.style.display = 'block'; }
         }
     }
 
-    categorySelect.addEventListener('change', () => { // 입력 폼 분류 변경 시
-        toggleDetailSection(categorySelect, 'details-', 'details-section');
-    });
+    categorySelect.addEventListener('change', () => { toggleDetailSection(categorySelect, 'details-', 'details-section'); });
+    filterCategorySelect.addEventListener('change', () => { toggleDetailSection(filterCategorySelect, 'filter-details-', 'filter-details-section'); });
 
-    filterCategorySelect.addEventListener('change', () => { // 필터 폼 분류 변경 시
-        toggleDetailSection(filterCategorySelect, 'filter-details-', 'filter-details-section');
-    });
-
-
-    // --- 단어 저장 로직 (일괄 처리) ---
     wordForm.addEventListener('submit', async function(event) {
-        // ... (이전과 동일한 단어 저장 로직) ...
         event.preventDefault();
         const wordPairsValue = wordPairsTextarea.value.trim();
         const categoryValue = categorySelect.value;
@@ -240,15 +172,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!wordPairsValue) { alert('단어와 뜻을 입력해주세요.'); return; }
         if (!categoryValue) { alert('공통 적용될 분류를 선택해주세요.'); return; }
-
         const lines = wordPairsValue.split('\n').filter(line => line.trim() !== '');
         if (lines.length === 0) { alert('입력된 단어가 없습니다.'); return; }
 
-        const wordsToInsert = [];
-        let parseErrorCount = 0;
+        const wordsToInsert = []; let parseErrorCount = 0;
         const wordMeaningRegex = /^([a-zA-Z0-9\s'-]*[a-zA-Z0-9'-])\s+(.*)$/;
 
-        for (const line of lines) { /* ... (이전과 동일한 파싱 로직) ... */
+        for (const line of lines) {
             const trimmedLine = line.trim(); if (!trimmedLine) continue;
             const match = trimmedLine.match(wordMeaningRegex);
             let word = ''; let meaning = '';
@@ -266,10 +196,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 const nameAttr = element.getAttribute('name');
                 if (nameAttr) {
                     let key;
-                    if (nameAttr.startsWith('tb_') || nameAttr.startsWith('wb_') || nameAttr.startsWith('me_') || nameAttr.startsWith('ext_')) {
-                        key = nameAttr.substring(3); // tb_grade -> grade
-                        if (nameAttr === 'wb_publisher') key = 'publisher'; // wb_publisher -> publisher (일관성)
-                        else if (nameAttr === 'wb_name') key = 'name'; // wb_name -> name
+                    const nameParts = nameAttr.split('_');
+                    if (nameParts.length > 1 && ['tb', 'wb', 'me', 'ext'].includes(nameParts[0])) {
+                        key = nameParts.slice(1).join('_');
+                        if (nameAttr === 'wb_publisher') key = 'publisher';
+                        else if (nameAttr === 'wb_name') key = 'name';
                     } else if (nameAttr === "etc_memo") { key = "memo"; }
 
                     if (key) {
@@ -284,31 +215,35 @@ document.addEventListener('DOMContentLoaded', () => {
         if (parseErrorCount > 0) { alert(`${parseErrorCount}개의 라인에서 단어와 뜻을 정확히 파싱하지 못했습니다.`); }
         if (wordsToInsert.length === 0) { alert('저장할 유효한 단어가 없습니다.'); return; }
 
-        try { /* ... (이전과 동일한 Supabase insert 로직) ... */
+        try {
             const { error } = await supabaseClient.from('words').insert(wordsToInsert);
             if (error) throw error;
             alert(`${wordsToInsert.length}개의 단어가 성공적으로 저장되었습니다.`);
             wordForm.reset(); categorySelect.value = "";
             toggleDetailSection(categorySelect, 'details-', 'details-section');
             loadWords();
-        } catch (error) { console.error('Error saving words:', error); alert(`단어 저장 중 오류 발생: ${error.message}`); }
+        } catch (error) { console.error('Error saving words:', error); alert(`단어 저장 중 오류 발생: ${error.message}`);}
     });
 
-    // --- 단어 목록 로드 및 필터링 로직 ---
-    async function loadWords(filters = null) { /* ... (이전과 동일) ... */
+    async function loadWords(filters = null) {
         try {
             let query = supabaseClient.from('words').select('*');
-            if (filters && filters.category) {
-                query = query.eq('category', filters.category);
-                if (filters.details) {
-                    for (const key in filters.details) {
-                        if (filters.details[key] && filters.details[key].trim() !== '') {
-                            query = query.eq(`details->>${key}`, filters.details[key].trim());
+            if (filters) {
+                if (filters.category) {
+                    query = query.eq('category', filters.category);
+                    if (filters.details) {
+                        for (const key in filters.details) {
+                            const filterValue = filters.details[key];
+                            if (filterValue && filterValue.trim() !== '') {
+                                if (filters.category === 'etc' && key === 'memo') {
+                                    query = query.ilike(`details->>${key}`, `%${filterValue.trim()}%`);
+                                } else {
+                                    query = query.eq(`details->>${key}`, filterValue.trim());
+                                }
+                            }
                         }
                     }
                 }
-            } else if (filters && !filters.category) { // 카테고리 필터가 "" (전체)인 경우
-                 // 아무것도 안하면 전체 카테고리 대상, details만 필터링 (이 경우는 없음)
             }
             query = query.order('created_at', { ascending: false });
             const { data: words, error } = await query;
@@ -317,77 +252,152 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) { console.error('Error loading words:', error); alert(`단어 목록 로딩 중 오류 발생: ${error.message}`); renderWordList([]);}
     }
 
-    function renderWordList(words) { /* ... (이전과 동일) ... */
-        wordTableBody.innerHTML = ''; displayedWordCountSpan.textContent = words.length;
-        selectAllCheckbox.checked = false; toggleDeleteSelectedBtn();
+    // 선택된 단어 수 업데이트 함수
+    function updateSelectedWordCount() {
+        const checkedCount = document.querySelectorAll('#wordTableBody input.row-checkbox:checked').length;
+        selectedWordCountSpan.textContent = checkedCount;
+        selectedWordsInfo.style.display = checkedCount > 0 ? 'block' : 'none';
+        startTestBtn.style.display = checkedCount > 0 ? 'inline-block' : 'none';
+    }
+
+    function renderWordList(words) {
+        wordTableBody.innerHTML = ''; 
+        displayedWordCountSpan.textContent = words.length;
+        selectAllCheckbox.checked = false; 
+        toggleDeleteSelectedBtn();
+        updateSelectedWordCount();
+        
+        // 전역 변수로 현재 표시된 단어 목록 저장
+        currentDisplayedWords = words;
+        
         if (words.length > 0) {
             words.forEach(word => {
-                const row = wordTableBody.insertRow(); row.setAttribute('data-id', word.id);
-                const checkboxCell = row.insertCell(); const checkbox = document.createElement('input');
-                checkbox.type = 'checkbox'; checkbox.classList.add('row-checkbox'); checkbox.value = word.id;
-                checkbox.addEventListener('change', toggleDeleteSelectedBtn); checkboxCell.appendChild(checkbox);
+                const row = wordTableBody.insertRow(); 
+                row.setAttribute('data-id', word.id);
+                
+                const cbCell = row.insertCell(); 
+                const cb = document.createElement('input'); 
+                cb.type='checkbox';
+                cb.classList.add('row-checkbox');
+                cb.value=word.id;
+                cb.onchange = function() {
+                    toggleDeleteSelectedBtn();
+                    updateSelectedWordCount();
+                };
+                cbCell.appendChild(cb);
+
                 row.insertCell().textContent = word.word; row.insertCell().textContent = word.meaning;
                 row.insertCell().textContent = getCategoryDisplayName(word.category);
-                let detailsText = '-'; if (word.details) { const dp = []; /* ... */ if(word.category==='textbook'){if(word.details.grade)dp.push(word.details.grade);if(word.details.publisher)dp.push(word.details.publisher);if(word.details.lesson)dp.push(word.details.lesson);if(word.details.sentence_numbers)dp.push(word.details.sentence_numbers);}else if(word.category==='workbook'){if(word.details.publisher)dp.push(word.details.publisher);if(word.details.name)dp.push(word.details.name);if(word.details.unit)dp.push(word.details.unit);if(word.details.passage_number)dp.push(word.details.passage_number);}else if(word.category==='mock_exam'){if(word.details.grade)dp.push(word.details.grade);if(word.details.year)dp.push(word.details.year);if(word.details.month)dp.push(word.details.month);if(word.details.number)dp.push(word.details.number);}else if(word.category==='external'){if(word.details.school)dp.push(word.details.school);if(word.details.grade)dp.push(word.details.grade);if(word.details.name)dp.push(word.details.name);}else if(word.category==='etc'){if(word.details.memo)dp.push(word.details.memo);} detailsText=dp.join(' / ')||'-';}
-                row.insertCell().textContent = detailsText; row.insertCell().textContent = word.common_memo || '-';
-                const actionsCell = row.insertCell(); const deleteBtn = document.createElement('button');
-                deleteBtn.textContent = '삭제'; deleteBtn.classList.add('delete-btn');
-                deleteBtn.onclick = () => deleteWord(word.id, word.word); actionsCell.appendChild(deleteBtn);
+                let dT = '-'; if(word.details){const p=[];if(word.category==='textbook'){if(word.details.grade)p.push(word.details.grade);if(word.details.publisher)p.push(word.details.publisher);if(word.details.lesson)p.push(word.details.lesson);if(word.details.sentence_numbers)p.push(word.details.sentence_numbers);}else if(word.category==='workbook'){if(word.details.publisher)p.push(word.details.publisher);if(word.details.name)p.push(word.details.name);if(word.details.unit)p.push(word.details.unit);if(word.details.passage_number)p.push(word.details.passage_number);}else if(word.category==='mock_exam'){if(word.details.grade)p.push(word.details.grade);if(word.details.year)p.push(word.details.year);if(word.details.month)p.push(word.details.month);if(word.details.number)p.push(word.details.number);}else if(word.category==='external'){if(word.details.school)p.push(word.details.school);if(word.details.grade)p.push(word.details.grade);if(word.details.name)p.push(word.details.name);}else if(word.category==='etc'){if(word.details.memo)p.push(word.details.memo);}dT=p.join(' / ')||'-';}
+                row.insertCell().textContent=dT; row.insertCell().textContent=word.common_memo||'-';
+                const actCell=row.insertCell(); const delBtn=document.createElement('button');delBtn.textContent='삭제';delBtn.classList.add('delete-btn');delBtn.onclick=()=>deleteWord(word.id,word.word);actCell.appendChild(delBtn);
             });
             startTestBtn.style.display = 'block';
         } else { wordTableBody.innerHTML = `<tr><td colspan="7">표시할 단어가 없습니다.</td></tr>`; startTestBtn.style.display = 'none'; }
     }
 
-    filterWordsBtn.addEventListener('click', () => { /* ... (이전과 동일) ... */
+    filterWordsBtn.addEventListener('click', () => {
         const categoryValue = filterCategorySelect.value;
-        const filters = { category: categoryValue, details: {} };
+        const filters = { category: categoryValue || null, details: {} };
         if (categoryValue) {
             const filterDetailSection = document.getElementById(`filter-details-${categoryValue}`);
             if (filterDetailSection) {
                 filterDetailSection.querySelectorAll('select, input[type="text"], textarea').forEach(element => {
                     const key = element.dataset.filterKey; const value = element.value;
-                    if (key && value !== '') { filters.details[key] = value; }
+                    if (key && value.trim() !== '') { filters.details[key] = value.trim(); }
                 });
             }
         }
-        if (categoryValue === "") filters.category = null; loadWords(filters);
+        loadWords(filters);
     });
 
-    loadAllWordsBtn.addEventListener('click', () => { /* ... (이전과 동일) ... */
+    loadAllWordsBtn.addEventListener('click', () => {
         filterCategorySelect.value = ""; toggleDetailSection(filterCategorySelect, 'filter-details-', 'filter-details-section');
         document.querySelectorAll('.filter-details-section select, .filter-details-section input[type="text"], .filter-details-section textarea').forEach(el => { if (el.tagName === 'SELECT') el.value = ""; else el.value = '';});
         loadWords();
     });
 
-    function getCategoryDisplayName(categoryKey) { /* ... (이전과 동일) ... */ const n={'textbook':'교과서','workbook':'부교재','mock_exam':'모의고사','external':'외부지문','etc':'기타'};return n[categoryKey]||categoryKey;}
-    async function deleteWord(wordId, wordText) { /* ... (이전과 동일) ... */ if(!confirm(`'${wordText}' 삭제?`))return;try{const{error}=await supabaseClient.from('words').delete().eq('id',wordId);if(error)throw error;alert('삭제됨.');refreshCurrentWordList();}catch(e){console.error(e);alert('삭제 오류');}}
-    function refreshCurrentWordList() { /* ... (이전과 동일) ... */ const c=filterCategorySelect.value;if(c&&c!==""){filterWordsBtn.click();}else{loadAllWordsBtn.click();}}
+    function getCategoryDisplayName(categoryKey) {const n={'textbook':'교과서','workbook':'부교재','mock_exam':'모의고사','external':'외부지문','etc':'기타'};return n[categoryKey]||categoryKey;}
+
+    async function deleteWord(wordId, wordText) {
+        if(!confirm(`'${wordText}' 단어를 정말로 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.`))return;
+        try{
+            const{error}=await supabaseClient.from('words').delete().eq('id',wordId);
+            if(error)throw error;
+            alert('단어가 성공적으로 삭제되었습니다.');
+            refreshCurrentWordList();
+        } catch(e) {
+            console.error('Error deleting word:', e);
+            alert(`단어 삭제 중 오류 발생: ${e.message}`);
+        }
+    }
+
+    function refreshCurrentWordList() {
+        const c=filterCategorySelect.value;
+        if(c&&c!==""){filterWordsBtn.click();}
+        else{loadAllWordsBtn.click();}
+    }
     
-    // --- 일괄 삭제 관련 로직 ---
-    selectAllCheckbox.addEventListener('change', function() { /* ... (이전과 동일) ... */ wordTableBody.querySelectorAll('.row-checkbox').forEach(c => c.checked=this.checked); toggleDeleteSelectedBtn();});
-    function toggleDeleteSelectedBtn() { /* ... (이전과 동일) ... */ const c=wordTableBody.querySelectorAll('.row-checkbox:checked');deleteSelectedBtn.style.display=c.length>0?'inline-block':'none';const a=wordTableBody.querySelectorAll('.row-checkbox');selectAllCheckbox.checked=a.length>0&&c.length===a.length;}
-    deleteSelectedBtn.addEventListener('click', async function() { /* ... (이전과 동일) ... */ const s=[];wordTableBody.querySelectorAll('.row-checkbox:checked').forEach(c=>s.push(c.value));if(s.length===0){alert('선택된 단어 없음');return;}if(!confirm(`${s.length}개 단어 삭제?`))return;try{const{error}=await supabaseClient.from('words').delete().in('id',s);if(error)throw error;alert(`${s.length}개 삭제됨.`);refreshCurrentWordList();}catch(e){console.error(e);alert('일괄 삭제 오류');}});
-    
-    startTestBtn.addEventListener('click', function() { /* ... (이전과 동일, 셀 인덱스 확인) ... */
-        const wordsForTest = [];
-        wordTableBody.querySelectorAll('tr').forEach(row => {
-            const checkbox = row.querySelector('.row-checkbox');
-            // 체크박스 셀(cells[0]) 다음부터 단어, 뜻...
-            if (checkbox && row.cells.length > 2 && row.dataset.id) {
-                 wordsForTest.push({ id: row.dataset.id, word: row.cells[1].textContent, meaning: row.cells[2].textContent });
-            }
-        });
-        if (wordsForTest.length === 0) { alert('테스트할 단어가 없습니다.'); return; }
-        try { localStorage.setItem('wordsForTest', JSON.stringify(wordsForTest)); const tW=window.open('test.html','_blank'); if(!tW)alert('팝업차단 해제요망');}
-        catch(e){console.error(e);alert('테스트 시작 오류');}
+    selectAllCheckbox.addEventListener('change', function() {
+        const checkboxes = document.querySelectorAll('#wordTableBody input.row-checkbox');
+        checkboxes.forEach(cb => cb.checked = this.checked);
+        toggleDeleteSelectedBtn();
+        updateSelectedWordCount();
     });
 
-    // --- 패치노트 관련 로직 (이전과 동일) ---
-    const patchNotesBtn = document.getElementById('patchNotesBtn'); /* ... (이하 동일) ... */
+    function toggleDeleteSelectedBtn() {
+        const c=wordTableBody.querySelectorAll('.row-checkbox:checked');
+        deleteSelectedBtn.style.display=c.length>0?'inline-block':'none';
+        const a=wordTableBody.querySelectorAll('.row-checkbox');
+        selectAllCheckbox.checked=a.length>0&&c.length===a.length;
+    }
+
+    deleteSelectedBtn.addEventListener('click', async function() {
+        const s=[];
+        wordTableBody.querySelectorAll('.row-checkbox:checked').forEach(c=>s.push(c.value));
+        if(s.length===0){alert('삭제할 단어를 선택해주세요.');return;}
+        if(!confirm(`선택된 ${s.length}개의 단어를 정말로 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.`))return;
+        try{
+            const{error}=await supabaseClient.from('words').delete().in('id',s);
+            if(error)throw error;
+            alert(`${s.length}개의 단어가 성공적으로 삭제되었습니다.`);
+            refreshCurrentWordList();
+        } catch(e) {
+            console.error('Error deleting selected words:', e);
+            alert(`선택된 단어 삭제 중 오류 발생: ${e.message}`);
+        }
+    });
+    
+    startTestBtn.addEventListener('click', function() {
+        const checkboxes = document.querySelectorAll('#wordTableBody input[type="checkbox"]:checked');
+        if (checkboxes.length === 0) {
+            alert('테스트할 단어를 하나 이상 선택해주세요.');
+            return;
+        }
+        
+        // 선택된 단어만 수집
+        const selectedWordIds = Array.from(checkboxes).map(checkbox => checkbox.value);
+        const selectedWords = currentDisplayedWords.filter(word => selectedWordIds.includes(word.id.toString()));
+        
+        if (selectedWords.length === 0) {
+            alert('선택된 단어가 없습니다.');
+            return;
+        }
+        
+        // 테스트용 단어를 localStorage에 저장
+        localStorage.setItem('wordsForTest', JSON.stringify(selectedWords));
+        
+        // 새 창에서 테스트 페이지 열기
+        window.open('test.html', '_blank', 'width=800,height=600');
+    });
+
+    const patchNotesBtn = document.getElementById('patchNotesBtn');
     const patchNotesModal = document.getElementById('patchNotesModal');
     const closePatchNotesModalBtn = document.getElementById('closePatchNotesModal');
     const patchNotesContentDiv = document.getElementById('patchNotesContent');
     const patchNotesData = [
+        { version: "v0.8.1", date: "2025-05-17", notes: ["startTestBtn 로직 복원 및 셀 인덱스 재확인.", "연동형 드롭다운 데이터 및 로직 최종 점검."] },
+        { version: "v0.8.0", date: "2025-05-17", notes: ["'기타' 분류의 메모 내용 포함 검색(CONTAINS) 기능 추가.", "연동형 드롭다운 기능 데이터베이스 및 로직 업데이트 완료."] },
         { version: "v0.7.0", date: "2025-05-15", notes: ["상세 정보 입력란 연동형 드롭다운 기능 추가 (교과서, 모의고사, 부교재).", "관련 데이터베이스 객체(textbookData, mockExamData, workbookData) 정의."] },
         { version: "v0.6.0", date: "2025-05-15", notes: ["단어 목록 일괄 삭제 기능 추가 (체크박스 사용).", "전체 선택/해제 체크박스 기능 추가.", "선택된 항목이 있을 때만 '선택 단어 일괄 삭제' 버튼 표시."] },
         { version: "v0.5.2", date: "2025-05-15", notes: ["단어/뜻 파싱 로직 개선 (정규표현식 사용).", "정규표현식 미매칭 시 이전 방식(첫 공백 기준)으로 파싱 시도 및 콘솔 경고 추가."] },
@@ -403,8 +413,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (closePatchNotesModalBtn) closePatchNotesModalBtn.addEventListener('click', () => patchNotesModal.style.display = 'none');
     window.addEventListener('click', (e) => { if (e.target == patchNotesModal) patchNotesModal.style.display = 'none'; });
 
-    // --- 페이지 로드 시 초기화 ---
     loadWords();
-    toggleDetailSection(categorySelect, 'details-', 'details-section'); // 입력폼 상세 숨김
-    toggleDetailSection(filterCategorySelect, 'filter-details-', 'filter-details-section'); // 필터폼 상세 숨김
+    toggleDetailSection(categorySelect, 'details-', 'details-section');
+    toggleDetailSection(filterCategorySelect, 'filter-details-', 'filter-details-section');
 });
